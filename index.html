@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripqo — Vandaag beslissen. Morgen vliegen.</title>
+<meta name="description" content="AI plant jouw last minute mystery trip. Vul je budget in, wij regelen de verrassing.">
+<style>
+:root{
+  --bg:#FAFAF8;--card-bg:#FFFFFF;--text:#1A1A1A;--text-2:#555;--text-3:#999;
+  --border:#EAEAEA;--border-2:#DDD;--purple:#534AB7;--purple-light:#7F77DD;
+  --purple-bg:#EEEDFE;--purple-border:#AFA9EC;--purple-text:#3C3489;
+  --green-bg:#E1F5EE;--green-text:#085041;--info-bg:#EEF1FF;--info-text:#3C3489;
+  --radius:14px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+.container{max-width:560px;margin:0 auto;padding:20px 16px 60px}
+.step{display:none}.step.active{display:block}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin:10px 0}
+.hint-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text-2)}
+.hint-row:last-child{border-bottom:none}
+.hint-emoji{font-size:18px;width:24px;text-align:center}
+.sfeer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px}
+.sfeer-opt{padding:11px 12px;border:1px solid var(--border-2);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;background:var(--card-bg);color:var(--text);transition:all .15s;user-select:none}
+.sfeer-opt:hover{border-color:var(--purple-border)}
+.sfeer-opt.on{background:var(--purple-bg);color:var(--purple-text);border-color:var(--purple-border)}
+label{font-size:13px;color:var(--text-2);display:block;margin:12px 0 5px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--border-2);border-radius:var(--radius-sm);font-size:15px;font-family:inherit;background:var(--card-bg);color:var(--text)}
+input:focus,select:focus{outline:none;border-color:var(--purple-border)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:var(--radius-sm);background:var(--purple);color:#fff;font-weight:500;transition:opacity .15s}
+button:hover{opacity:.9}
+button.secondary{background:var(--card-bg);color:var(--text);border:1px solid var(--border-2)}
+button.outline{background:var(--card-bg);border:2px solid var(--purple-border);color:var(--purple-text)}
+.activity-card{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin:6px 0}
+.stars{color:#EF9F27;font-size:12px}
+.act-price{font-size:13px;font-weight:600;color:var(--green-text)}
+.book-link{display:flex;align-items:center;gap:10px;padding:12px 0;text-decoration:none;color:var(--text);font-size:14px;border-bottom:1px solid var(--border)}
+.book-link:last-child{border-bottom:none}
+.book-link:hover{color:var(--purple)}
+.book-emoji{font-size:18px}
+.logo{font-size:24px;font-weight:700;color:var(--purple);letter-spacing:-.5px}
+.logo span{color:var(--text-3);font-weight:400}
+.reveal-dest{font-size:28px;font-weight:600;color:var(--purple);margin:8px 0 4px}
+.progress{height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin:16px 0}
+.progress-inner{height:100%;background:var(--purple-light);width:0%;transition:width .3s}
+.price-badge{font-size:13px;padding:4px 12px;border-radius:var(--radius-sm);background:var(--green-bg);color:var(--green-text)}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+.feature-card{text-align:center;padding:16px 10px}
+.feature-emoji{font-size:24px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--radius-sm);margin:2px;background:var(--info-bg);color:var(--info-text)}
+.muted{color:var(--text-3)}.small{font-size:12px}.center{text-align:center}
+.uppercase{text-transform:uppercase;letter-spacing:.5px;font-size:12px;font-weight:600;color:var(--text-3)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- LANDING -->
+<div id="step0" class="step active">
+  <div class="center" style="padding:40px 0 24px">
+    <div class="logo" style="font-size:32px">Trip<span>qo</span></div>
+    <p style="font-size:22px;font-weight:600;margin:16px 0 4px">Vandaag beslissen.</p>
+    <p style="font-size:22px;font-weight:600;color:var(--purple);margin:0 0 14px">Morgen vliegen.</p>
+    <p style="color:var(--text-2);margin:0 0 28px">Vul je budget in. AI regelt de rest.</p>
+    <button id="start-btn" style="font-size:15px;padding:11px 32px">Plan mijn trip ↗</button>
+    <p class="small muted" style="margin-top:12px">Gratis · Geen account nodig · AI kiest voor jou</p>
+  </div>
+  <div class="feature-grid">
+    <div class="card feature-card"><div class="feature-emoji">🛫</div><p style="font-size:13px;font-weight:600;margin:6px 0 2px">AI kiest de vlucht</p><p class="small muted">Goedkoopste last minute deal</p></div>
+    <div class="card feature-card"><div class="feature-emoji">🏨</div><p style="font-size:13px;font-weight:600;margin:6px 0 2px">AI kiest het hotel</p><p class="small muted">Beste prijs-kwaliteit op reviews</p></div>
+    <div class="card feature-card"><div class="feature-emoji">🎉</div><p style="font-size:13px;font-weight:600;margin:6px 0 2px">AI kiest activiteit</p><p class="small muted">Swap als je iets anders wil</p></div>
+  </div>
+</div>
+
+<!-- FORMULIER -->
+<div id="step1" class="step">
+  <div class="logo" style="font-size:18px;margin-bottom:4px">Tripqo</div>
+  <p style="color:var(--text-2);margin:0 0 20px;font-size:14px">Vertel ons je wensen — AI regelt de rest.</p>
+  <div class="row2">
+    <div><label>Vertrekdatum</label><input type="date" id="vertrek"></div>
+    <div><label>Luchthaven</label>
+      <select id="luchthaven">
+        <option value="AMS">Amsterdam Schiphol</option>
+        <option value="EIN">Eindhoven</option>
+        <option value="RTM">Rotterdam</option>
+        <option value="GRQ">Groningen Eelde</option>
+        <option value="MST">Maastricht</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div><label>Aantal nachten</label>
+      <select id="nachten">
+        <option value="2">2 nachten</option><option value="3" selected>3 nachten</option>
+        <option value="4">4 nachten</option><option value="5">5 nachten</option><option value="7">7 nachten</option>
+      </select>
+    </div>
+    <div><label>Aantal personen</label>
+      <select id="personen">
+        <option value="1">1 persoon</option><option value="2" selected>2 personen</option>
+        <option value="3">3 personen</option><option value="4">4 personen</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div><label>Budget per persoon</label><input type="number" id="budget" placeholder="bv. 300"></div>
+    <div style="display:flex;flex-direction:column;justify-content:flex-end"><p id="totaal-hint" class="small muted" style="margin-bottom:4px">Totaal: —</p></div>
+  </div>
+  <label>Sfeer</label>
+  <div class="sfeer-grid">
+    <div class="sfeer-opt" data-v="zon">☀️ Zon &amp; strand</div>
+    <div class="sfeer-opt" data-v="stad">🏛️ Stad &amp; cultuur</div>
+    <div class="sfeer-opt" data-v="natuur">🏔️ Natuur &amp; avontuur</div>
+    <div class="sfeer-opt" data-v="relaxed">💆 Relaxed &amp; spa</div>
+  </div>
+  <button id="plan-btn" style="width:100%;font-size:15px;padding:11px">Verras mij ↗</button>
+  <p id="err" style="color:#C0392B;font-size:13px;margin-top:8px;display:none">Vul alle velden in en kies een sfeer.</p>
+</div>
+
+<!-- LOADING -->
+<div id="step2" class="step center" style="padding:40px 0">
+  <div class="logo" style="font-size:18px;margin-bottom:24px">Tripqo</div>
+  <p style="font-size:16px;font-weight:600;margin:0 0 6px">AI zoekt jouw perfecte trip...</p>
+  <p class="small muted" id="load-msg">Last minute deals analyseren</p>
+  <div class="progress" style="max-width:280px;margin:16px auto"><div class="progress-inner" id="pbar"></div></div>
+</div>
+
+<!-- HINTS -->
+<div id="step3" class="step">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <div class="logo" style="font-size:18px">Tripqo</div>
+    <span class="price-badge" id="price-badge"></span>
+  </div>
+  <p style="color:var(--text-2);margin:0 0 20px;font-size:14px">Jouw trip is gepland — bestemming nog geheim:</p>
+  <div class="card">
+    <div class="hint-row"><span class="hint-emoji">🌡️</span><span id="hint-temp"></span></div>
+    <div class="hint-row"><span class="hint-emoji">⏱️</span><span id="hint-vlucht"></span></div>
+    <div class="hint-row"><span class="hint-emoji">👕</span><span id="hint-kleding"></span></div>
+    <div class="hint-row"><span class="hint-emoji">🗣️</span><span id="hint-taal"></span></div>
+    <div class="hint-row"><span class="hint-emoji">⭐</span><span id="hint-hotel"></span></div>
+  </div>
+  <div class="card">
+    <p class="uppercase" style="margin-bottom:8px">Dagplanning</p>
+    <div id="dagplanning"></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <p class="uppercase">Jouw activiteit</p>
+      <button id="swap-btn" class="outline" style="font-size:12px;padding:5px 10px">Andere suggestie</button>
+    </div>
+    <div id="activity-display"></div>
+  </div>
+  <div class="row2" style="margin-top:16px">
+    <button id="reveal-btn" class="outline" style="font-size:14px;padding:11px">Onthul bestemming ↗</button>
+    <button id="reset-btn-3" class="secondary" style="font-size:14px;padding:11px">Nieuwe trip</button>
+  </div>
+</div>
+
+<!-- REVEAL -->
+<div id="step4" class="step">
+  <div class="logo" style="font-size:18px;margin-bottom:14px">Tripqo</div>
+  <p class="small muted">Je gaat naar...</p>
+  <div class="reveal-dest" id="reveal-dest"></div>
+  <p style="color:var(--text-2);margin:0 0 20px;font-size:14px" id="reveal-sub"></p>
+
+  <div class="card">
+    <p class="uppercase" style="margin-bottom:4px">Vluchten</p>
+    <p class="small muted" style="margin-bottom:8px">Goedkoopste opties via Travelpayouts</p>
+    <a id="link-tp" class="book-link" href="#" target="_blank" rel="noopener">
+      <span class="book-emoji">✈️</span>
+      <div style="flex:1"><p style="margin:0;font-size:14px" id="tp-label">Vluchten zoeken</p><p class="small muted" style="margin:0">Goedkoopste last minute prijzen</p></div>
+      <span class="muted small">↗</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <p class="uppercase" style="margin-bottom:4px">Hotel</p>
+    <p class="small muted" style="margin-bottom:8px">Geselecteerd op beste prijs-kwaliteit</p>
+    <a id="link-booking" class="book-link" href="#" target="_blank" rel="noopener">
+      <span class="book-emoji">🏨</span>
+      <div style="flex:1"><p style="margin:0;font-size:14px" id="booking-label">Hotel boeken</p><p class="small muted" style="margin:0" id="booking-stars"></p></div>
+      <span class="muted small">↗</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <p class="uppercase">Activiteit</p>
+      <span class="small" style="color:var(--green-text);background:var(--green-bg);padding:2px 8px;border-radius:var(--radius-sm)">tot 15% commissie</span>
+    </div>
+    <p class="small muted" style="margin-bottom:8px">Via GetYourGuide</p>
+    <div id="activity-final"></div>
+    <a id="link-gyg" class="book-link" href="#" target="_blank" rel="noopener" style="margin-top:6px">
+      <span class="book-emoji">🎟️</span>
+      <div style="flex:1"><p style="margin:0;font-size:14px">Activiteit boeken op GetYourGuide</p><p class="small muted" style="margin:0">Direct beschikbaar, gratis annulering</p></div>
+      <span class="muted small">↗</span>
+    </a>
+  </div>
+
+  <button id="reset-btn-4" class="secondary" style="width:100%;margin-top:14px;font-size:14px;padding:11px">Nieuwe trip plannen</button>
+  <p class="small muted center" style="margin-top:16px">Tripqo · Vandaag beslissen, morgen vliegen</p>
+</div>
+
+</div>
+
+<script>
+// ====== AFFILIATE IDs — vul hier later je echte codes in ======
+var AFFILIATE = {
+  tp_marker:    'JOUW_TP_MARKER',     // Travelpayouts marker
+  booking_aid:  'JOUW_BOOKING_AID',   // Booking.com affiliate ID
+  gyg_partner:  'JOUW_GYG_ID'         // GetYourGuide partner ID
+};
+// ==============================================================
+
+var sel=null, tripData=null, actIdx=0;
+
+var db={
+  zon:{normaal:[
+    {b:"Barcelona, Spanje",iata:"BCN",temp:"26°C",vt:"2 uur",kl:"lichte zomerkleding & zwemkleding",taal:"Spaans",vl:120,ht:110,hotel:"Hotel Arts Barcelona",hstars:"4.6",dagen:["Barceloneta strand & eerste verkenning","Sagrada Família & Gothic Quarter","Dagtrip naar Sitges"],acts:[{n:"Sagrada Família skip-the-line tour",s:"4.8",r:"12.400",p:49,cat:"cultuur"},{n:"Barceloneta sunset cruise",s:"4.7",r:"3.200",p:35,cat:"boot"},{n:"Gothic Quarter streetfood tour",s:"4.9",r:"8.100",p:42,cat:"eten"}]},
+    {b:"Lissabon, Portugal",iata:"LIS",temp:"24°C",vt:"2.5 uur",kl:"lichte kleding, vest voor de avond",taal:"Portugees",vl:100,ht:90,hotel:"Memmo Alfama",hstars:"4.5",dagen:["Alfama wijk & miradouros","Dagtrip Sintra & kastelen","Belém toren & pastéis de nata"],acts:[{n:"Privé tuk-tuk tour door Alfama",s:"4.9",r:"6.800",p:38,cat:"tour"},{n:"Fado show met diner in Alfama",s:"4.8",r:"4.300",p:55,cat:"cultuur"},{n:"Sintra & Cascais dagtrip",s:"4.7",r:"9.200",p:45,cat:"dagtrip"}]},
+    {b:"Malaga, Spanje",iata:"AGP",temp:"28°C",vt:"3 uur",kl:"zomerkleding & zonnebrand",taal:"Spaans",vl:110,ht:85,hotel:"Vincci Selección Posada del Patio",hstars:"4.4",dagen:["Picasso museum & historisch centrum","Strand & tapas avond","Dagtrip naar Nerja & grotten"],acts:[{n:"Nerja grotten dagtrip",s:"4.6",r:"2.800",p:42,cat:"natuur"},{n:"Malaga wijnproeverij & tapas tour",s:"4.8",r:"1.900",p:55,cat:"eten"},{n:"Flamenco show",s:"4.7",r:"3.400",p:35,cat:"cultuur"}]}
+  ],premium:[
+    {b:"Maldiven",iata:"MLE",temp:"30°C",vt:"10 uur",kl:"lichte zomerkleding & snorkelspullen",taal:"Engels",vl:1800,ht:1200,hotel:"One & Only Reethi Rah",hstars:"4.9",dagen:["Overwater villa & snorkelen","Duiken & dolfijnen","Privéstrand & zonsondergang diner"],acts:[{n:"Privé snorkelexcursie",s:"4.9",r:"890",p:120,cat:"water"},{n:"Onderwaterdiner",s:"4.8",r:"450",p:280,cat:"eten"},{n:"Zonsopgang kajakken",s:"4.7",r:"670",p:85,cat:"water"}]}
+  ]},
+  stad:{normaal:[
+    {b:"Rome, Italië",iata:"FCO",temp:"22°C",vt:"2.5 uur",kl:"comfortabele schoenen & laagjes",taal:"Italiaans",vl:130,ht:120,hotel:"Hotel Campo de' Fiori",hstars:"4.4",dagen:["Colosseum & Forum Romanum","Vaticaan & Sixtijnse Kapel","Trastevere & lokale restaurants"],acts:[{n:"Colosseum skip-the-line & underground",s:"4.8",r:"18.900",p:55,cat:"cultuur"},{n:"Vaticaan vroegboektour",s:"4.9",r:"22.400",p:65,cat:"cultuur"},{n:"Rome bij nacht food tour",s:"4.8",r:"7.600",p:48,cat:"eten"}]},
+    {b:"Praag, Tsjechië",iata:"PRG",temp:"18°C",vt:"1.5 uur",kl:"laagjes & comfortabele schoenen",taal:"Tsjechisch",vl:80,ht:70,hotel:"Augustine Hotel",hstars:"4.6",dagen:["Praagse Burcht & Karelsbrug","Oude Stad & astronomische klok","Joods kwartier & bierproeverij"],acts:[{n:"Privérondleiding Praagse Burcht",s:"4.9",r:"4.200",p:35,cat:"cultuur"},{n:"Tsjechische bierproeverij",s:"4.7",r:"6.800",p:28,cat:"eten"},{n:"Moldau zonsondergang cruise",s:"4.6",r:"3.100",p:22,cat:"boot"}]},
+    {b:"Wenen, Oostenrijk",iata:"VIE",temp:"20°C",vt:"1.5 uur",kl:"nette casual kleding",taal:"Duits",vl:90,ht:100,hotel:"Hotel Sacher Wien",hstars:"4.7",dagen:["Schönbrunn paleis & tuinen","Kunsthistorisch Museum","Prater & Wiener Schnitzel"],acts:[{n:"Schönbrunn paleis privétour",s:"4.8",r:"9.300",p:45,cat:"cultuur"},{n:"Weense filharmonie concert",s:"4.9",r:"5.600",p:75,cat:"muziek"},{n:"Koffiehuistour met patisserie",s:"4.7",r:"4.100",p:38,cat:"eten"}]}
+  ],premium:[
+    {b:"Tokyo, Japan",iata:"NRT",temp:"20°C",vt:"12 uur",kl:"nette casual kleding",taal:"Japans",vl:2200,ht:600,hotel:"Aman Tokyo",hstars:"4.9",dagen:["Privétour Tsukiji & sushiles","Theaceremonie & Kyoto","Omakase Michelin diner"],acts:[{n:"Privé sushiles bij Tsukiji",s:"4.9",r:"1.200",p:180,cat:"eten"},{n:"Geisha theaceremonie Kyoto",s:"4.8",r:"890",p:95,cat:"cultuur"},{n:"Tokyo by night privétour",s:"4.7",r:"2.100",p:120,cat:"tour"}]}
+  ]},
+  natuur:{normaal:[
+    {b:"Reykjavik, IJsland",iata:"KEF",temp:"12°C",vt:"3 uur",kl:"warme lagen & waterdichte jas",taal:"IJslands",vl:180,ht:130,hotel:"Ion Adventure Hotel",hstars:"4.5",dagen:["Gouden Cirkel & geisers","Snorkelen bij Silfra","Noorderlicht zoeken"],acts:[{n:"Silfra snorkel tussen tektonische platen",s:"4.9",r:"8.400",p:79,cat:"avontuur"},{n:"Gouden Cirkel privétour",s:"4.8",r:"12.600",p:95,cat:"natuur"},{n:"Noorderlicht zoektocht",s:"4.7",r:"9.800",p:65,cat:"natuur"}]},
+    {b:"Bergen, Noorwegen",iata:"BGO",temp:"15°C",vt:"2 uur",kl:"waterdichte kleding & stevige schoenen",taal:"Noors",vl:120,ht:110,hotel:"Hotel Oleana Bergen",hstars:"4.5",dagen:["Fjordcruise Hardangerfjord","Fløibanen bergwandeling","Hanzestad & vismarkt"],acts:[{n:"Hardangerfjord cruise",s:"4.8",r:"5.600",p:55,cat:"boot"},{n:"Fløibanen & bergwandeling",s:"4.7",r:"7.200",p:35,cat:"natuur"},{n:"Bergen foodtour",s:"4.6",r:"3.400",p:45,cat:"eten"}]}
+  ],premium:[
+    {b:"Safari Kenia",iata:"NBO",temp:"26°C",vt:"8 uur",kl:"kaki kleding",taal:"Swahili & Engels",vl:1400,ht:1200,hotel:"Angama Mara Lodge",hstars:"4.9",dagen:["Game drive Masai Mara","Ballonvaart bij zonsopgang","Masai dorpsbezoek"],acts:[{n:"Privé ballonvaart Masai Mara",s:"4.9",r:"1.800",p:450,cat:"avontuur"},{n:"Masai cultuurprogramma",s:"4.8",r:"980",p:85,cat:"cultuur"},{n:"Nachtgame drive",s:"4.7",r:"2.400",p:120,cat:"avontuur"}]}
+  ]},
+  relaxed:{normaal:[
+    {b:"Budapest, Hongarije",iata:"BUD",temp:"21°C",vt:"2 uur",kl:"casual & badkleding",taal:"Hongaars",vl:95,ht:85,hotel:"Párisi Udvar Hotel",hstars:"4.7",dagen:["Széchenyi thermaal bad","Boedapest ruïnekroegen","Margaretha-eiland & wellness"],acts:[{n:"Széchenyi spa VIP dagpakket",s:"4.8",r:"9.400",p:45,cat:"spa"},{n:"Ruin bar pub crawl",s:"4.7",r:"14.200",p:28,cat:"nachtleven"},{n:"Riviercruise bij nacht",s:"4.8",r:"8.900",p:32,cat:"boot"}]},
+    {b:"Porto, Portugal",iata:"OPO",temp:"22°C",vt:"2.5 uur",kl:"lichte kleding, vest voor de avond",taal:"Portugees",vl:105,ht:95,hotel:"The Yeatman Hotel",hstars:"4.8",dagen:["Ribeira & Douro rivier","Portwijnproeverij","Livraria Lello & strand"],acts:[{n:"Douro vallei wijnproeverij dagtrip",s:"4.9",r:"6.200",p:65,cat:"wijn"},{n:"Porto cultuurwandeling",s:"4.7",r:"4.800",p:32,cat:"cultuur"},{n:"Zonsondergang boottocht",s:"4.8",r:"5.600",p:28,cat:"boot"}]}
+  ],premium:[
+    {b:"Amalfi kust, Italië",iata:"NAP",temp:"24°C",vt:"2.5 uur",kl:"lichte elegante kleding",taal:"Italiaans",vl:400,ht:1100,hotel:"Il San Pietro di Positano",hstars:"4.9",dagen:["Privéjacht Positano & Ravello","Michelin diner met zeezicht","Privéspa & helikoptervlucht"],acts:[{n:"Privéjacht Amalfi kust",s:"4.9",r:"2.100",p:380,cat:"boot"},{n:"Cooking class Napolitaanse keuken",s:"4.8",r:"3.400",p:95,cat:"eten"},{n:"Positano sunset cruise",s:"4.7",r:"4.800",p:65,cat:"boot"}]}
+  ]}
+};
+
+function $(id){return document.getElementById(id)}
+function showStep(n){var s=document.querySelectorAll('.step');for(var i=0;i<s.length;i++)s[i].classList.remove('active');$('step'+n).classList.add('active');window.scrollTo(0,0)}
+
+function setSfeer(el){
+  var opts=document.querySelectorAll('.sfeer-opt');
+  for(var i=0;i<opts.length;i++)opts[i].classList.remove('on');
+  el.classList.add('on');sel=el.getAttribute('data-v');
+}
+
+function resetApp(){
+  sel=null;actIdx=0;
+  var opts=document.querySelectorAll('.sfeer-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('on');
+  $('budget').value='';$('totaal-hint').textContent='Totaal: —';$('err').style.display='none';
+  showStep(1);
+}
+
+function renderActivity(a){
+  return '<div class="activity-card"><p style="font-size:14px;font-weight:600;margin:0 0 4px">'+a.n+'</p>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span class="stars">★ '+a.s+'</span>'+
+    '<span class="small muted">('+a.r+' reviews)</span>'+
+    '<span class="small" style="padding:2px 8px;border-radius:6px;background:var(--bg);color:var(--text-2)">'+a.cat+'</span></div>'+
+    '<p class="act-price" style="margin:0">€'+a.p+' per persoon</p></div>';
+}
+
+function updateTotaal(){
+  var b=parseInt($('budget').value),p=parseInt($('personen').value);
+  $('totaal-hint').textContent=(b&&p)?('Totaal: €'+(b*p).toLocaleString('nl')):'Totaal: —';
+}
+
+// Events
+$('start-btn').onclick=function(){showStep(1)};
+var sfeerOpts=document.querySelectorAll('.sfeer-opt');
+for(var i=0;i<sfeerOpts.length;i++)sfeerOpts[i].onclick=function(){setSfeer(this)};
+$('budget').oninput=updateTotaal;
+$('personen').onchange=updateTotaal;
+$('reset-btn-3').onclick=resetApp;
+$('reset-btn-4').onclick=resetApp;
+
+$('plan-btn').onclick=function(){
+  var vertrek=$('vertrek').value,bpp=parseInt($('budget').value),
+      nachten=parseInt($('nachten').value),personen=parseInt($('personen').value);
+  if(!vertrek||!bpp||!sel){$('err').style.display='block';return}
+  $('err').style.display='none';showStep(2);
+
+  var isPremium=bpp>=2000;
+  var msgs=isPremium?['Exclusieve opties zoeken','Business class controleren','5-sterren hotels vergelijken','Premium ervaringen selecteren']:['Last minute deals analyseren','Vluchten vergelijken','Hotels op reviews filteren','Activiteiten selecteren'];
+  var mi=0,pct=0;
+  var iv=setInterval(function(){pct=Math.min(pct+3,92);$('pbar').style.width=pct+'%';$('load-msg').textContent=msgs[Math.min(Math.floor(mi),msgs.length-1)];if(pct%25===0)mi++;},60);
+
+  setTimeout(function(){
+    clearInterval(iv);$('pbar').style.width='100%';
+    var cat=db[sel],opties=isPremium?cat.premium:cat.normaal;
+    var passend=opties.filter(function(o){var k=o.vl+(o.ht*nachten/personen);return k>=bpp*0.35&&k<=bpp*1.05});
+    if(!passend.length){passend=[opties.reduce(function(a,b){return Math.abs((a.vl+a.ht*nachten/personen)-bpp)<Math.abs((b.vl+b.ht*nachten/personen)-bpp)?a:b})]}
+    var trip=passend[Math.floor(Math.random()*passend.length)];
+    var totaal=(trip.vl*personen)+(trip.ht*nachten);
+    actIdx=0;
+    $('price-badge').textContent='±€'+Math.round(totaal).toLocaleString('nl');
+    $('hint-temp').textContent='Gemiddeld '+trip.temp;
+    $('hint-vlucht').textContent='Vlucht: '+trip.vt+' vliegen';
+    $('hint-kleding').textContent='Neem mee: '+trip.kl;
+    $('hint-taal').textContent='Ze spreken er: '+trip.taal;
+    $('hint-hotel').textContent='Hotel: '+trip.hotel+' — '+trip.hstars+' sterren';
+    var dp='';for(var j=0;j<trip.dagen.length;j++){dp+='<div style="padding:6px 0;border-bottom:'+(j===trip.dagen.length-1?'none':'1px solid var(--border)')+';font-size:14px;color:var(--text-2)"><strong style="color:var(--text);font-weight:600">Dag '+(j+1)+'</strong> — '+trip.dagen[j]+'</div>'}
+    $('dagplanning').innerHTML=dp;
+    $('activity-display').innerHTML=renderActivity(trip.acts[0]);
+    tripData={trip:trip,personen:personen,nachten:nachten,vertrek:vertrek};
+    setTimeout(function(){showStep(3)},400);
+  },2400);
+};
+
+$('swap-btn').onclick=function(){
+  if(!tripData)return;
+  actIdx=(actIdx+1)%tripData.trip.acts.length;
+  $('activity-display').innerHTML=renderActivity(tripData.trip.acts[actIdx]);
+};
+
+$('reveal-btn').onclick=function(){
+  if(!tripData)return;
+  var trip=tripData.trip,personen=tripData.personen,nachten=tripData.nachten,vertrek=tripData.vertrek;
+  var origin=$('luchthaven').value,act=trip.acts[actIdx];
+  $('reveal-dest').textContent=trip.b;
+  $('reveal-sub').textContent=nachten+' nachten · '+personen+' personen · veel plezier!';
+  var d=new Date(vertrek),r=new Date(d);r.setDate(r.getDate()+nachten);
+  function fmt(x){return x.toISOString().split('T')[0]}
+  var tp='https://www.jetradar.nl/flights/'+origin+'-'+trip.iata+'/?depart_date='+fmt(d)+'&return_date='+fmt(r)+'&adults='+personen+(AFFILIATE.tp_marker!=='JOUW_TP_MARKER'?'&marker='+AFFILIATE.tp_marker:'');
+  var bk='https://www.booking.com/searchresults.nl.html?ss='+encodeURIComponent(trip.hotel)+(AFFILIATE.booking_aid!=='JOUW_BOOKING_AID'?'&aid='+AFFILIATE.booking_aid:'');
+  var gg='https://www.getyourguide.nl/s/?q='+encodeURIComponent(act.n+' '+trip.b.split(',')[0])+(AFFILIATE.gyg_partner!=='JOUW_GYG_ID'?'&partner_id='+AFFILIATE.gyg_partner:'');
+  $('link-tp').href=tp;$('tp-label').textContent='Vluchten '+origin+' → '+trip.b.split(',')[0];
+  $('link-booking').href=bk;$('booking-label').textContent=trip.hotel;$('booking-stars').textContent='★ '+trip.hstars+' sterren · beste prijs-kwaliteit';
+  $('link-gyg').href=gg;$('activity-final').innerHTML=renderActivity(act);
+  showStep(4);
+};
+</script>
+</body>
+</html>
