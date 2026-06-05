@@ -84,7 +84,6 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
 <body>
 <div class="container">
 
-<!-- LANDING -->
 <div id="step0" class="step active">
   <div class="hero">
     <div class="logo" style="font-size:30px">Trip<span>qo</span></div>
@@ -108,12 +107,11 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
     <p class="uppercase" style="margin-bottom:6px">Hoe werkt het?</p>
     <div class="faq-item"><div class="faq-q"><span>Wat is een mystery trip?</span><span style="transition:.2s">+</span></div><div class="faq-a">Je vult je budget, datum en sfeer in. AI kiest een bestemming, hotel en activiteit die daarbij passen — maar je ziet pas waar je heen gaat als je op "onthul" drukt. De spanning van het niet-weten is precies het leuke.</div></div>
     <div class="faq-item"><div class="faq-q"><span>Hoeveel kost het?</span><span style="transition:.2s">+</span></div><div class="faq-a">Tripqo gebruiken is volledig gratis. Je boekt zelf je vlucht, hotel en activiteit via de links die we tonen — tegen de normale prijs, niet duurder.</div></div>
-    <div class="faq-item"><div class="faq-q"><span>Hoe betrouwbaar zijn de prijzen?</span><span style="transition:.2s">+</span></div><div class="faq-a">We tonen actuele indicatieprijzen via Travelpayouts. De exacte prijs zie je bij het boeken op de site van de aanbieder. Last minute kunnen prijzen snel veranderen, dus boek snel na de reveal.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Hoe betrouwbaar zijn de prijzen?</span><span style="transition:.2s">+</span></div><div class="faq-a">We tonen actuele indicatieprijzen via Travelpayouts, gekoppeld aan jouw gekozen reisdagen. De exacte prijs zie je bij het boeken op de site van de aanbieder. Last minute kunnen prijzen snel veranderen, dus boek snel na de reveal.</div></div>
     <div class="faq-item"><div class="faq-q"><span>Boeken jullie voor mij?</span><span style="transition:.2s">+</span></div><div class="faq-a">Nee, jij boekt zelf via onze links — zo houd jij de controle en betaal je nooit meer dan nodig. Wij doen het zoekwerk en de verrassing.</div></div>
   </div>
 </div>
 
-<!-- FORMULIER -->
 <div id="step1" class="step">
   <div class="logo" style="font-size:18px;margin-bottom:4px">Tripqo</div>
   <p style="color:var(--text-2);margin:0 0 18px;font-size:14px">Vertel ons je wensen — AI regelt de rest.</p>
@@ -163,7 +161,6 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   <p id="err" style="color:#C0392B;font-size:13px;margin-top:8px;display:none">Vul datum + budget in en kies een optie.</p>
 </div>
 
-<!-- LOADING -->
 <div id="step2" class="step center" style="padding:50px 0">
   <div class="logo" style="font-size:18px;margin-bottom:24px">Tripqo</div>
   <p style="font-size:16px;font-weight:700;margin:0 0 6px">AI zoekt jouw perfecte trip...</p>
@@ -171,7 +168,6 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   <div class="progress"><div class="progress-inner" id="pbar"></div></div>
 </div>
 
-<!-- HINTS -->
 <div id="step3" class="step">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
     <div class="logo" style="font-size:18px">Tripqo</div>
@@ -202,7 +198,6 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   </div>
 </div>
 
-<!-- REVEAL -->
 <div id="step4" class="step">
   <div class="logo" style="font-size:18px;margin-bottom:14px">Tripqo</div>
   <div class="card center" style="background:var(--grad);border:none;color:#fff">
@@ -308,9 +303,9 @@ function apiSfeer(s){
   return s;
 }
 
-async function fetchDestinations(origin, sfeer, budget, maand){
+async function fetchDestinations(origin, sfeer, budget, depart, ret){
   try{
-    var url='/api/flights?origin='+origin+'&sfeer='+apiSfeer(sfeer)+'&budget='+budget+'&maand='+maand;
+    var url='/api/flights?origin='+origin+'&sfeer='+apiSfeer(sfeer)+'&budget='+budget+'&depart='+depart+(ret?'&ret='+ret:'');
     var r=await fetch(url);
     if(!r.ok) throw new Error('API fout');
     var data=await r.json();
@@ -333,13 +328,16 @@ $('plan-btn').onclick=async function(){
   $('err').style.display='none';showStep(2);
 
   var origin=$('luchthaven').value;
-  var maand=vertrek.substring(0,7);
+  var dDate=new Date(vertrek), rDate=new Date(dDate);
+  rDate.setDate(rDate.getDate()+nachten);
+  function isoDate(x){return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+  var departISO=isoDate(dDate), returnISO=isoDate(rDate);
 
   var msgs=['Last minute deals analyseren','Live vluchten ophalen','Hotels op reviews filteren','Activiteiten selecteren'];
   var mi=0,pct=0;
   var iv=setInterval(function(){pct=Math.min(pct+2,90);$('pbar').style.width=pct+'%';$('load-msg').textContent=msgs[Math.min(Math.floor(mi),msgs.length-1)];if(pct%22===0)mi++;},70);
 
-  var res=await fetchDestinations(origin, sel, bpp, maand);
+  var res=await fetchDestinations(origin, sel, bpp, departISO, returnISO);
 
   clearInterval(iv);$('pbar').style.width='100%';
 
@@ -359,8 +357,9 @@ $('plan-btn').onclick=async function(){
   var vluchtPrijs = pick.price ? pick.price : Math.round(70+Math.random()*130);
   var totaal=(vluchtPrijs*personen)+(info.ht*nachten);
   actIdx=0;
+  var prijsAge = (pick.ageHours!==undefined && pick.ageHours!==null) ? pick.ageHours : null;
 
-  $('price-badge').textContent='±€'+Math.round(totaal).toLocaleString('nl');
+  $('price-badge').textContent='indicatie ±€'+Math.round(totaal).toLocaleString('nl');
   $('live-indicator').innerHTML = res.live ? '<span class="live-badge">LIVE prijzen</span>' : '';
   $('hint-temp').textContent='Gemiddeld '+info.temp;
   $('hint-vlucht').textContent='Vlucht: '+info.vt+' vliegen';
@@ -370,7 +369,7 @@ $('plan-btn').onclick=async function(){
   var dp='';for(var j=0;j<info.dagen.length;j++){dp+='<div style="padding:6px 0;border-bottom:'+(j===info.dagen.length-1?'none':'1px solid var(--border)')+';font-size:14px;color:var(--text-2)"><strong style="color:var(--text);font-weight:600">Dag '+(j+1)+'</strong> — '+info.dagen[j]+'</div>'}
   $('dagplanning').innerHTML=dp;
   $('activity-display').innerHTML=renderActivity(info.acts[0]);
-  tripData={dest:pick.dest,info:info,personen:personen,nachten:nachten,vertrek:vertrek,vluchtPrijs:vluchtPrijs};
+  tripData={dest:pick.dest,info:info,personen:personen,nachten:nachten,vertrek:vertrek,vluchtPrijs:vluchtPrijs,prijsAge:prijsAge,live:res.live};
 
   setTimeout(function(){showStep(3)},500);
 };
@@ -391,11 +390,17 @@ $('reveal-btn').onclick=function(){
   $('reveal-sub').textContent=nachten+' nachten · '+personen+' personen · veel plezier!';
   var d=new Date(vertrek),r=new Date(d);r.setDate(r.getDate()+nachten);
   var searchCode=origin+ddmm(d)+tripData.dest+ddmm(r)+personen;
-  var tp='https://www.aviasales.com/search/'+searchCode+'?marker='+AFFILIATE.tp_marker;
+  var tp='https://www.aviasales.com/search/'+searchCode+'?marker='+AFFILIATE.tp_marker+'&locale=nl&currency=eur';
   var bk='https://www.booking.com/searchresults.nl.html?ss='+encodeURIComponent(info.hotel)+(AFFILIATE.booking_aid!=='JOUW_BOOKING_AID'?'&aid='+AFFILIATE.booking_aid:'');
   var gg='https://www.getyourguide.nl/s/?q='+encodeURIComponent(act.n+' '+info.b.split(',')[0])+(AFFILIATE.gyg_partner!=='JOUW_GYG_ID'?'&partner_id='+AFFILIATE.gyg_partner:'');
   $('link-tp').href=tp;$('tp-label').textContent='Vluchten '+origin+' → '+info.b.split(',')[0];
-  if(tripData.vluchtPrijs){$('tp-sub').textContent='vanaf ±€'+tripData.vluchtPrijs+' p.p. retour'}
+  if(tripData.vluchtPrijs){
+    var ageTxt='';
+    if(tripData.live && tripData.prijsAge!==null){
+      ageTxt = tripData.prijsAge<24 ? ' (prijs <24u oud)' : ' (prijs '+Math.round(tripData.prijsAge/24)+'d oud)';
+    }
+    $('tp-sub').textContent='indicatie ±€'+tripData.vluchtPrijs+' p.p.'+ageTxt+' — check actuele prijs';
+  }
   $('link-booking').href=bk;$('booking-label').textContent=info.hotel;$('booking-stars').textContent='★ '+info.hstars+' sterren · beste prijs-kwaliteit';
   $('link-gyg').href=gg;$('activity-final').innerHTML=renderActivity(act);
   showStep(4);
