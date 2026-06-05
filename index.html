@@ -84,6 +84,7 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
 <body>
 <div class="container">
 
+<!-- LANDING -->
 <div id="step0" class="step active">
   <div class="hero">
     <div class="logo" style="font-size:30px">Trip<span>qo</span></div>
@@ -95,7 +96,7 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   <div class="trust-row">
     <span class="trust-item">✓ Gratis te gebruiken</span>
     <span class="trust-item">✓ Geen account nodig</span>
-    <span class="trust-item">✓ 40+ bestemmingen</span>
+    <span class="trust-item">✓ 45+ bestemmingen</span>
   </div>
   <div class="feature-grid">
     <div class="card feature-card"><div class="feature-emoji">🛫</div><p style="font-size:13px;font-weight:700;margin:6px 0 2px">AI kiest de vlucht</p><p class="small muted">Goedkoopste last minute deal</p></div>
@@ -103,15 +104,17 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
     <div class="card feature-card"><div class="feature-emoji">🎉</div><p style="font-size:13px;font-weight:700;margin:6px 0 2px">AI kiest activiteit</p><p class="small muted">Swap als je iets anders wil</p></div>
   </div>
 
+  <!-- FAQ -->
   <div class="card" style="margin-top:16px">
     <p class="uppercase" style="margin-bottom:6px">Hoe werkt het?</p>
     <div class="faq-item"><div class="faq-q"><span>Wat is een mystery trip?</span><span style="transition:.2s">+</span></div><div class="faq-a">Je vult je budget, datum en sfeer in. AI kiest een bestemming, hotel en activiteit die daarbij passen — maar je ziet pas waar je heen gaat als je op "onthul" drukt. De spanning van het niet-weten is precies het leuke.</div></div>
     <div class="faq-item"><div class="faq-q"><span>Hoeveel kost het?</span><span style="transition:.2s">+</span></div><div class="faq-a">Tripqo gebruiken is volledig gratis. Je boekt zelf je vlucht, hotel en activiteit via de links die we tonen — tegen de normale prijs, niet duurder.</div></div>
-    <div class="faq-item"><div class="faq-q"><span>Hoe betrouwbaar zijn de prijzen?</span><span style="transition:.2s">+</span></div><div class="faq-a">We tonen actuele indicatieprijzen via Travelpayouts, gekoppeld aan jouw gekozen reisdagen. De exacte prijs zie je bij het boeken op de site van de aanbieder. Last minute kunnen prijzen snel veranderen, dus boek snel na de reveal.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Hoe betrouwbaar zijn de prijzen?</span><span style="transition:.2s">+</span></div><div class="faq-a">We tonen "vanaf"-richtprijzen op basis van recent gevonden tickets voor jouw reisdagen, met een realistische last-minute marge. De exacte prijs zie je bij het boeken op de site van de aanbieder. Last minute kunnen prijzen snel veranderen, dus boek snel na de reveal.</div></div>
     <div class="faq-item"><div class="faq-q"><span>Boeken jullie voor mij?</span><span style="transition:.2s">+</span></div><div class="faq-a">Nee, jij boekt zelf via onze links — zo houd jij de controle en betaal je nooit meer dan nodig. Wij doen het zoekwerk en de verrassing.</div></div>
   </div>
 </div>
 
+<!-- FORMULIER -->
 <div id="step1" class="step">
   <div class="logo" style="font-size:18px;margin-bottom:4px">Tripqo</div>
   <p style="color:var(--text-2);margin:0 0 18px;font-size:14px">Vertel ons je wensen — AI regelt de rest.</p>
@@ -119,6 +122,7 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
     <div><label>Vertrekdatum</label><input type="date" id="vertrek"></div>
     <div><label>Luchthaven</label>
       <select id="luchthaven">
+        <option value="NL">🇳🇱 Heel Nederland (goedkoopste)</option>
         <option value="AMS">Amsterdam Schiphol</option>
         <option value="EIN">Eindhoven</option>
         <option value="RTM">Rotterdam</option>
@@ -161,6 +165,7 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   <p id="err" style="color:#C0392B;font-size:13px;margin-top:8px;display:none">Vul datum + budget in en kies een optie.</p>
 </div>
 
+<!-- LOADING -->
 <div id="step2" class="step center" style="padding:50px 0">
   <div class="logo" style="font-size:18px;margin-bottom:24px">Tripqo</div>
   <p style="font-size:16px;font-weight:700;margin:0 0 6px">AI zoekt jouw perfecte trip...</p>
@@ -168,6 +173,7 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   <div class="progress"><div class="progress-inner" id="pbar"></div></div>
 </div>
 
+<!-- HINTS -->
 <div id="step3" class="step">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
     <div class="logo" style="font-size:18px">Tripqo</div>
@@ -198,6 +204,7 @@ button.big{width:100%;font-size:15px;padding:13px;background:var(--grad)}
   </div>
 </div>
 
+<!-- REVEAL -->
 <div id="step4" class="step">
   <div class="logo" style="font-size:18px;margin-bottom:14px">Tripqo</div>
   <div class="card center" style="background:var(--grad);border:none;color:#fff">
@@ -287,6 +294,7 @@ function updateTotaal(){
   $('totaal-hint').textContent=(b&&p)?('Totaal: €'+(b*p).toLocaleString('nl')):'Totaal: —';
 }
 
+// FAQ accordion
 var faqs=document.querySelectorAll('.faq-item');
 for(var f=0;f<faqs.length;f++){faqs[f].onclick=function(){this.classList.toggle('open')}}
 
@@ -298,9 +306,18 @@ $('personen').onchange=updateTotaal;
 $('reset-btn-3').onclick=resetApp;
 $('reset-btn-4').onclick=resetApp;
 
+// Bepaalt welke sfeer-categorie we naar de API sturen
 function apiSfeer(s){
   if(s==='goedkoop'||s==='alles') return 'alles';
   return s;
+}
+
+// Filtert een lijst bestemmingscodes op wat echt vanaf deze luchthaven vliegt
+function filterByAirport(codes, origin){
+  var allowed = (typeof AIRPORTS!=='undefined' && AIRPORTS[origin]) ? AIRPORTS[origin] : null;
+  if(!allowed) return codes; // null = alles toegestaan (bv. Schiphol)
+  var f = codes.filter(function(c){return allowed.indexOf(c)>=0});
+  return f.length>0 ? f : codes; // als filter leeg is, val terug op alles
 }
 
 async function fetchDestinations(origin, sfeer, budget, depart, ret){
@@ -311,11 +328,15 @@ async function fetchDestinations(origin, sfeer, budget, depart, ret){
     var data=await r.json();
     if(data && data.success && data.destinations && data.destinations.length>0){
       var known=data.destinations.filter(function(d){return DEST[d.dest]});
+      // filter op luchthaven
+      var allowed=(typeof AIRPORTS!=='undefined' && AIRPORTS[origin]) ? AIRPORTS[origin] : null;
+      if(allowed){ known=known.filter(function(d){return allowed.indexOf(d.dest)>=0}); }
       if(known.length>0) return {live:true, list:known};
     }
     throw new Error('geen bruikbare data');
   }catch(e){
     var fb=FALLBACK[apiSfeer(sfeer)]||FALLBACK.alles;
+    fb=filterByAirport(fb, origin);
     var list=fb.map(function(code){return {dest:code, price:null}});
     return {live:false, list:list};
   }
@@ -343,33 +364,41 @@ $('plan-btn').onclick=async function(){
 
   var pick;
   if(sel==='goedkoop' && res.live){
+    // Goedkoopste: API-lijst is al op prijs gesorteerd, pak de eerste
     pick=res.list[0];
   } else if(sel==='goedkoop'){
+    // Geen live data: kies bestemming met laagste hotelprijs als proxy
     var sorted=res.list.slice().sort(function(a,b){return (DEST[a.dest].ht)-(DEST[b.dest].ht)});
     pick=sorted[0];
   } else {
+    // Willekeurig uit top 5
     pick=res.list[Math.floor(Math.random()*Math.min(res.list.length,5))];
   }
 
   var info=DEST[pick.dest];
   if(!info){var fb=FALLBACK[apiSfeer(sel)]||FALLBACK.alles;info=DEST[fb[0]];pick={dest:fb[0],price:null}}
 
-  var vluchtPrijs = pick.price ? pick.price : Math.round(70+Math.random()*130);
+  var rawPrijs = pick.price ? pick.price : Math.round(70+Math.random()*130);
+  // Realistische last-minute opslag op cache-prijs (+25%), afgerond op 5
+  var vluchtPrijs = pick.price ? Math.round((rawPrijs*1.25)/5)*5 : rawPrijs;
   var totaal=(vluchtPrijs*personen)+(info.ht*nachten);
   actIdx=0;
   var prijsAge = (pick.ageHours!==undefined && pick.ageHours!==null) ? pick.ageHours : null;
+  var realOrigin = pick.origin ? pick.origin : (origin==='NL' ? 'EIN' : origin);
 
-  $('price-badge').textContent='indicatie ±€'+Math.round(totaal).toLocaleString('nl');
+  $('price-badge').textContent='vanaf ~€'+Math.round(totaal).toLocaleString('nl');
   $('live-indicator').innerHTML = res.live ? '<span class="live-badge">LIVE prijzen</span>' : '';
   $('hint-temp').textContent='Gemiddeld '+info.temp;
-  $('hint-vlucht').textContent='Vlucht: '+info.vt+' vliegen';
+  var apNamesH={AMS:'Amsterdam',EIN:'Eindhoven',RTM:'Rotterdam',GRQ:'Groningen',MST:'Maastricht'};
+  var vanafTxt = (origin==='NL' && realOrigin) ? (' vanaf '+(apNamesH[realOrigin]||realOrigin)) : '';
+  $('hint-vlucht').textContent='Vlucht: '+info.vt+' vliegen'+vanafTxt;
   $('hint-kleding').textContent='Neem mee: '+info.kl;
   $('hint-taal').textContent='Ze spreken er: '+info.taal;
   $('hint-hotel').textContent='Hotel: '+info.hotel+' — '+info.hstars+' sterren';
   var dp='';for(var j=0;j<info.dagen.length;j++){dp+='<div style="padding:6px 0;border-bottom:'+(j===info.dagen.length-1?'none':'1px solid var(--border)')+';font-size:14px;color:var(--text-2)"><strong style="color:var(--text);font-weight:600">Dag '+(j+1)+'</strong> — '+info.dagen[j]+'</div>'}
   $('dagplanning').innerHTML=dp;
   $('activity-display').innerHTML=renderActivity(info.acts[0]);
-  tripData={dest:pick.dest,info:info,personen:personen,nachten:nachten,vertrek:vertrek,vluchtPrijs:vluchtPrijs,prijsAge:prijsAge,live:res.live};
+  tripData={dest:pick.dest,info:info,personen:personen,nachten:nachten,vertrek:vertrek,vluchtPrijs:vluchtPrijs,prijsAge:prijsAge,live:res.live,realOrigin:realOrigin};
 
   setTimeout(function(){showStep(3)},500);
 };
@@ -385,21 +414,26 @@ function ddmm(x){return String(x.getDate()).padStart(2,'0')+String(x.getMonth()+
 $('reveal-btn').onclick=function(){
   if(!tripData)return;
   var info=tripData.info,personen=tripData.personen,nachten=tripData.nachten,vertrek=tripData.vertrek;
-  var origin=$('luchthaven').value,act=info.acts[actIdx];
+  var origin=tripData.realOrigin || $('luchthaven').value;
+  if(origin==='NL') origin='EIN';
+  var act=info.acts[actIdx];
+  var apNames={AMS:'Amsterdam',EIN:'Eindhoven',RTM:'Rotterdam',GRQ:'Groningen',MST:'Maastricht'};
+  var origName=apNames[origin]||origin;
   $('reveal-dest').textContent=info.b;
   $('reveal-sub').textContent=nachten+' nachten · '+personen+' personen · veel plezier!';
   var d=new Date(vertrek),r=new Date(d);r.setDate(r.getDate()+nachten);
+  // Aviasales zoek-URL: AMS<dag><maand>BCN<dag><maand><personen>
   var searchCode=origin+ddmm(d)+tripData.dest+ddmm(r)+personen;
   var tp='https://www.aviasales.com/search/'+searchCode+'?marker='+AFFILIATE.tp_marker+'&locale=nl&currency=eur';
   var bk='https://www.booking.com/searchresults.nl.html?ss='+encodeURIComponent(info.hotel)+(AFFILIATE.booking_aid!=='JOUW_BOOKING_AID'?'&aid='+AFFILIATE.booking_aid:'');
   var gg='https://www.getyourguide.nl/s/?q='+encodeURIComponent(act.n+' '+info.b.split(',')[0])+(AFFILIATE.gyg_partner!=='JOUW_GYG_ID'?'&partner_id='+AFFILIATE.gyg_partner:'');
-  $('link-tp').href=tp;$('tp-label').textContent='Vluchten '+origin+' → '+info.b.split(',')[0];
+  $('link-tp').href=tp;$('tp-label').textContent='Vluchten '+origName+' → '+info.b.split(',')[0];
   if(tripData.vluchtPrijs){
     var ageTxt='';
     if(tripData.live && tripData.prijsAge!==null){
-      ageTxt = tripData.prijsAge<24 ? ' (prijs <24u oud)' : ' (prijs '+Math.round(tripData.prijsAge/24)+'d oud)';
+      ageTxt = tripData.prijsAge<24 ? ' · prijs <24u oud' : ' · prijs '+Math.round(tripData.prijsAge/24)+ 'd oud';
     }
-    $('tp-sub').textContent='indicatie ±€'+tripData.vluchtPrijs+' p.p.'+ageTxt+' — check actuele prijs';
+    $('tp-sub').textContent='vanaf ~€'+tripData.vluchtPrijs+' p.p.'+ageTxt+' — check actuele prijs';
   }
   $('link-booking').href=bk;$('booking-label').textContent=info.hotel;$('booking-stars').textContent='★ '+info.hstars+' sterren · beste prijs-kwaliteit';
   $('link-gyg').href=gg;$('activity-final').innerHTML=renderActivity(act);
